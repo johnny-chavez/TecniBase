@@ -1,6 +1,5 @@
 def menu_principal():
     while True:
-        print("mensaje nuevo")
         print("\n========== MENÚ ==========")
         print("1. Registrar Cliente")
         print("2. Registrar Servicio")
