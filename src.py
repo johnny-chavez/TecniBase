@@ -5,23 +5,3 @@ if miConexion.is_connected():
 else:
     print("❌ No se pudo conectar")
 cursor = miConexion.cursor()
-print()
-print("Tabla Cliente")
-cursor.execute("SELECT * FROM cliente")
-
-resultados = cursor.fetchall()
-
-for fila in resultados:
-    print(fila)
-
-print()
-print("Tabla servicio tecnico")
-cursor.execute("SELECT * FROM servicio_tecnico")
-
-resultados = cursor.fetchall()
-
-for fila in resultados:
-    print(fila)
-
-cursor.close()
-miConexion.close()
