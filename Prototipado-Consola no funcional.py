@@ -133,15 +133,73 @@ def eliminar_cliente():
 
 #Opciones Del menú servicios
 
+def menu_servicio():
+    while True:
+        print("\n----- REGISTRAR SERVICIO -----")
+        print("1. Registrar servicio")
+        print("2. Consultar servicios")
+        print("3. Editar servicio")
+        print("4. Eliminar servicio")
+        print("5. Volver")
+
+        op = input("Seleccione: ")
+
+        if op == "1":
+            registrar_servicio()
+        elif op == "2":
+            consultar_servicio()
+        elif op == "3":
+            editar_servicio()
+        elif op == "4":
+            eliminar_servicio()
+        elif op == "5":
+            break
+        else:
+            print("Opción inválida")
+
+
 def registrar_servicio():
     print("\n----- REGISTRAR SERVICIO -----")
-    input("ID del cliente: ")
-    input("ID del equipo: ")
-    input("Tipo de servicio: ")
-    input("ID del técnico asignado: ")
-    input("¿Agregar otro equipo? (S/N): ")
+    id_cliente = input("ID del cliente: ")
+    id_equipo = input("ID del equipo: ")
+    tipo = input("Tipo de servicio: ")
+    id_tecnico = input("ID del técnico asignado: ")
+    otro = input("¿Agregar otro equipo? (S/N): ")
+
+    sql = """INSERT INTO servicio 
+    (id_cliente, id_equipo, tipo_servicio, id_tecnico, otro_equipo)
+    VALUES (%s,%s,%s,%s,%s)"""
+
+    cursor.execute(sql, (id_cliente, id_equipo, tipo, id_tecnico, otro))
+    miConexion.commit()
+
     print("Servicio registrado.")
 
+
+def consultar_servicio():
+    cursor.execute("SELECT * FROM servicio")
+    for s in cursor.fetchall():
+        print(s)
+
+
+def editar_servicio():
+    id_servicio = input("ID del servicio a editar: ")
+    nuevo_tipo = input("Nuevo tipo de servicio: ")
+
+    sql = "UPDATE servicio SET tipo_servicio=%s WHERE id_servicio=%s"
+    cursor.execute(sql, (nuevo_tipo, id_servicio))
+    miConexion.commit()
+
+    print("Servicio actualizado.")
+
+
+def eliminar_servicio():
+    id_servicio = input("ID del servicio a eliminar: ")
+    cursor.execute("DELETE FROM servicio WHERE id_servicio=%s", (id_servicio,))
+    miConexion.commit()
+    print("Servicio eliminado.")
+
+#control tecnico
 
 def control_tecnico():
     while True:
@@ -165,23 +223,180 @@ def control_tecnico():
         else:
             print("Opción inválida")
 
+#registrar venta/factura
+def menu_venta_factura():
+    while True:
+        print("\n----- REGISTRAR VENTA / FACTURA -----")
+        print("1. Registrar venta")
+        print("2. Consultar ventas")
+        print("3. Editar venta")
+        print("4. Eliminar venta")
+        print("----------------------")
+        print("5. Registrar factura")
+        print("6. Consultar facturas")
+        print("7. Editar factura")
+        print("8. Eliminar factura")
+        print("9. Volver")
+
+        op = input("Seleccione: ")
+
+        if op == "1":
+            registrar_venta()
+        elif op == "2":
+            consultar_venta()
+        elif op == "3":
+            editar_venta()
+        elif op == "4":
+            eliminar_venta()
+        elif op == "5":
+            registrar_factura()
+        elif op == "6":
+            consultar_factura()
+        elif op == "7":
+            editar_factura()
+        elif op == "8":
+            eliminar_factura()
+        elif op == "9":
+            break
+        else:
+            print("Opción inválida")
+
 
 def registrar_venta():
     print("\n----- REGISTRAR VENTA / FACTURA -----")
-    input("Costo total: ")
-    input("Fecha de pago: ")
-    input("Método de pago: ")
-    input("ID del servicio solicitado: ")
+    total = input("Costo total: ")
+    fecha = input("Fecha de pago: ")
+    metodo = input("Método de pago: ")
+    id_servicio = input("ID del servicio solicitado: ")
+
+    sql = "INSERT INTO venta (total, fecha_pago, metodo_pago, id_servicio) VALUES (%s,%s,%s,%s)"
+    cursor.execute(sql, (total, fecha, metodo, id_servicio))
+    miConexion.commit()
+
     print("Pago registrado y factura generada.")
+
+
+def consultar_venta():
+    cursor.execute("SELECT * FROM venta")
+    for v in cursor.fetchall():
+        print(v)
+
+
+def editar_venta():
+    id_venta = input("ID de la venta: ")
+    nuevo_total = input("Nuevo costo total: ")
+
+    sql = "UPDATE venta SET total=%s WHERE id_venta=%s"
+    cursor.execute(sql, (nuevo_total, id_venta))
+    miConexion.commit()
+
+    print("Venta actualizada.")
+
+
+def eliminar_venta():
+    id_venta = input("ID de la venta: ")
+    cursor.execute("DELETE FROM venta WHERE id_venta=%s", (id_venta,))
+    miConexion.commit()
+    print("Venta eliminada.")
+
+
+def registrar_factura():
+    id_venta = input("ID de la venta: ")
+    fecha = input("Fecha de factura: ")
+
+    sql = "INSERT INTO factura (id_venta, fecha) VALUES (%s,%s)"
+    cursor.execute(sql, (id_venta, fecha))
+    miConexion.commit()
+
+    print("Factura registrada.")
+
+
+def consultar_factura():
+    cursor.execute("SELECT * FROM factura")
+    for f in cursor.fetchall():
+        print(f)
+
+
+def editar_factura():
+    id_factura = input("ID de la factura: ")
+    nueva_fecha = input("Nueva fecha: ")
+
+    sql = "UPDATE factura SET fecha=%s WHERE id_factura=%s"
+    cursor.execute(sql, (nueva_fecha, id_factura))
+    miConexion.commit()
+
+    print("Factura actualizada.")
+
+
+def eliminar_factura():
+    id_factura = input("ID de la factura: ")
+    cursor.execute("DELETE FROM factura WHERE id_factura=%s", (id_factura,))
+    miConexion.commit()
+    print("Factura eliminada.")
+
+
+#gestion inventario
+def menu_inventario():
+    while True:
+        print("\n----- GESTIÓN DE INVENTARIO -----")
+        print("1. Registrar producto")
+        print("2. Consultar inventario")
+        print("3. Editar producto")
+        print("4. Eliminar producto")
+        print("5. Volver")
+
+        op = input("Seleccione: ")
+
+        if op == "1":
+            gestion_inventario()
+        elif op == "2":
+            consultar_inventario()
+        elif op == "3":
+            editar_inventario()
+        elif op == "4":
+            eliminar_inventario()
+        elif op == "5":
+            break
+        else:
+            print("Opción inválida")
 
 
 def gestion_inventario():
     print("\n----- GESTIÓN DE INVENTARIO -----")
-    input("Registrar materia prima (nombre): ")
-    input("Cantidad: ")
-    input("Costo por unidad: ")
-    input("Datos del proveedor: ")
+    nombre = input("Registrar materia prima (nombre): ")
+    cantidad = input("Cantidad: ")
+    costo = input("Costo por unidad: ")
+    proveedor = input("Datos del proveedor: ")
+
+    sql = "INSERT INTO inventario (nombre, cantidad, costo, proveedor) VALUES (%s,%s,%s,%s)"
+    cursor.execute(sql, (nombre, cantidad, costo, proveedor))
+    miConexion.commit()
+
     print("Inventario actualizado.")
+
+
+def consultar_inventario():
+    cursor.execute("SELECT * FROM inventario")
+    for i in cursor.fetchall():
+        print(i)
+
+
+def editar_inventario():
+    id_prod = input("ID del producto: ")
+    nueva_cantidad = input("Nueva cantidad: ")
+
+    sql = "UPDATE inventario SET cantidad=%s WHERE id_producto=%s"
+    cursor.execute(sql, (nueva_cantidad, id_prod))
+    miConexion.commit()
+
+    print("Inventario actualizado.")
+
+
+def eliminar_inventario():
+    id_prod = input("ID del producto: ")
+    cursor.execute("DELETE FROM inventario WHERE id_producto=%s", (id_prod,))
+    miConexion.commit()
+    print("Producto eliminado.")
 
 
 menu_principal()
