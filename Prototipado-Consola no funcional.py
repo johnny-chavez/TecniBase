@@ -166,18 +166,19 @@ def registrar_servicio():
     id_tecnico = input("ID del técnico asignado: ")
     otro = input("¿Agregar otro equipo? (S/N): ")
 
-    sql = """INSERT INTO servicio 
-    (id_cliente, id_equipo, tipo_servicio, id_tecnico, otro_equipo)
-    VALUES (%s,%s,%s,%s,%s)"""
+    fecha = input("Fecha del servicio (YYYY-MM-DD): ")
 
-    cursor.execute(sql, (id_cliente, id_equipo, tipo, id_tecnico, otro))
+    sql = """INSERT INTO servicio_prestado (fecha, id_cliente, tipo_servicio)
+    VALUES (%s,%s,%s)"""
+
+    cursor.execute(sql, (fecha, id_cliente, tipo))
     miConexion.commit()
 
     print("Servicio registrado.")
 
 
 def consultar_servicio():
-    cursor.execute("SELECT * FROM servicio")
+    cursor.execute("SELECT * FROM servicio_prestado")
     for s in cursor.fetchall():
         print(s)
 
@@ -186,7 +187,7 @@ def editar_servicio():
     id_servicio = input("ID del servicio a editar: ")
     nuevo_tipo = input("Nuevo tipo de servicio: ")
 
-    sql = "UPDATE servicio SET tipo_servicio=%s WHERE id_servicio=%s"
+    sql = "UPDATE servicio_prestado SET tipo_servicio=%s WHERE id_servicio=%s"
     cursor.execute(sql, (nuevo_tipo, id_servicio))
     miConexion.commit()
 
@@ -195,9 +196,10 @@ def editar_servicio():
 
 def eliminar_servicio():
     id_servicio = input("ID del servicio a eliminar: ")
-    cursor.execute("DELETE FROM servicio WHERE id_servicio=%s", (id_servicio,))
+    cursor.execute("DELETE FROM servicio_prestado WHERE id_servicio=%s", (id_servicio,))
     miConexion.commit()
     print("Servicio eliminado.")
+
 
 #control tecnico
 
@@ -224,6 +226,7 @@ def control_tecnico():
             print("Opción inválida")
 
 #registrar venta/factura
+
 def menu_venta_factura():
     while True:
         print("\n----- REGISTRAR VENTA / FACTURA -----")
@@ -231,7 +234,6 @@ def menu_venta_factura():
         print("2. Consultar ventas")
         print("3. Editar venta")
         print("4. Eliminar venta")
-        print("----------------------")
         print("5. Registrar factura")
         print("6. Consultar facturas")
         print("7. Editar factura")
@@ -264,13 +266,12 @@ def menu_venta_factura():
 
 def registrar_venta():
     print("\n----- REGISTRAR VENTA / FACTURA -----")
-    total = input("Costo total: ")
-    fecha = input("Fecha de pago: ")
-    metodo = input("Método de pago: ")
+    tipo_pago = input("Método de pago: ")
     id_servicio = input("ID del servicio solicitado: ")
+    id_cajero = input("ID del cajero: ")
 
-    sql = "INSERT INTO venta (total, fecha_pago, metodo_pago, id_servicio) VALUES (%s,%s,%s,%s)"
-    cursor.execute(sql, (total, fecha, metodo, id_servicio))
+    sql = "INSERT INTO venta (id_servicio, tipo_pago, id_cajero) VALUES (%s,%s,%s)"
+    cursor.execute(sql, (id_servicio, tipo_pago, id_cajero))
     miConexion.commit()
 
     print("Pago registrado y factura generada.")
@@ -284,10 +285,10 @@ def consultar_venta():
 
 def editar_venta():
     id_venta = input("ID de la venta: ")
-    nuevo_total = input("Nuevo costo total: ")
+    nuevo_pago = input("Nuevo método de pago: ")
 
-    sql = "UPDATE venta SET total=%s WHERE id_venta=%s"
-    cursor.execute(sql, (nuevo_total, id_venta))
+    sql = "UPDATE venta SET tipo_pago=%s WHERE id_venta=%s"
+    cursor.execute(sql, (nuevo_pago, id_venta))
     miConexion.commit()
 
     print("Venta actualizada.")
@@ -301,11 +302,13 @@ def eliminar_venta():
 
 
 def registrar_factura():
-    id_venta = input("ID de la venta: ")
-    fecha = input("Fecha de factura: ")
+    id_servicio = input("ID del servicio: ")
+    nro = input("Número de factura: ")
+    fecha = input("Fecha de emisión (YYYY-MM-DD): ")
+    total = input("Monto total: ")
 
-    sql = "INSERT INTO factura (id_venta, fecha) VALUES (%s,%s)"
-    cursor.execute(sql, (id_venta, fecha))
+    sql = "INSERT INTO factura (id_servicio, nro_factura, fecha_emision, monto_total) VALUES (%s,%s,%s,%s)"
+    cursor.execute(sql, (id_servicio, nro, fecha, total))
     miConexion.commit()
 
     print("Factura registrada.")
@@ -318,22 +321,22 @@ def consultar_factura():
 
 
 def editar_factura():
-    id_factura = input("ID de la factura: ")
-    nueva_fecha = input("Nueva fecha: ")
+    id_servicio = input("ID del servicio: ")
+    nuevo_total = input("Nuevo monto total: ")
 
-    sql = "UPDATE factura SET fecha=%s WHERE id_factura=%s"
-    cursor.execute(sql, (nueva_fecha, id_factura))
+    sql = "UPDATE factura SET monto_total=%s WHERE id_servicio=%s"
+    cursor.execute(sql, (nuevo_total, id_servicio))
     miConexion.commit()
 
     print("Factura actualizada.")
 
 
 def eliminar_factura():
-    id_factura = input("ID de la factura: ")
-    cursor.execute("DELETE FROM factura WHERE id_factura=%s", (id_factura,))
+    id_servicio = input("ID del servicio: ")
+    cursor.execute("DELETE FROM factura WHERE id_servicio=%s", (id_servicio,))
     miConexion.commit()
     print("Factura eliminada.")
-
+    
 
 #gestion inventario
 def menu_inventario():
