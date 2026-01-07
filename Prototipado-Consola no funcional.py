@@ -362,41 +362,70 @@ def menu_inventario():
 
 
 def gestion_inventario():
-    print("\n----- GESTIÓN DE INVENTARIO -----")
-    nombre = input("Registrar materia prima (nombre): ")
-    cantidad = input("Cantidad: ")
-    costo = input("Costo por unidad: ")
-    proveedor = input("Datos del proveedor: ")
+    print("\n===== REGISTRAR PRODUCTO =====")
+    id_catalogo = input("ID del catálogo: ")
+    marca = input("Marca: ")
+    descripcion = input("Descripción: ")
+    costo = input("Costo: ")
+    proveedor = input("Proveedor: ")
+    inventario = input("Cantidad en inventario: ")
 
-    sql = "INSERT INTO inventario (nombre, cantidad, costo, proveedor) VALUES (%s,%s,%s,%s)"
-    cursor.execute(sql, (nombre, cantidad, costo, proveedor))
+    sql = """
+    INSERT INTO Producto (id_catalogo, marca, descripcion, costo, proveedor, inventario)
+    VALUES (%s, %s, %s, %s, %s, %s)
+    """
+    cursor.execute(sql, (id_catalogo, marca, descripcion, costo, proveedor, inventario))
     miConexion.commit()
 
-    print("Inventario actualizado.")
+    print("Producto registrado correctamente")
 
 
 def consultar_inventario():
-    cursor.execute("SELECT * FROM inventario")
-    for i in cursor.fetchall():
-        print(i)
+    print("\n===== LISTADO DE PRODUCTOS =====")
+
+    sql = "SELECT * FROM Producto"
+    cursor.execute(sql)
+    productos = cursor.fetchall()
+
+    if len(productos) == 0:
+        print("No existen productos registrados.")
+    else:
+        print("Productos registrados:")
+        for p in productos:
+            print(p)
 
 
 def editar_inventario():
-    id_prod = input("ID del producto: ")
-    nueva_cantidad = input("Nueva cantidad: ")
+    print("\n===== EDITAR PRODUCTO EN EL INVENTARIO=====")
+    id_producto = input("ID del producto a editar: ")
+    costo = input("Nuevo costo: ")
+    inventario = input("Nuevo inventario: ")
 
-    sql = "UPDATE inventario SET cantidad=%s WHERE id_producto=%s"
-    cursor.execute(sql, (nueva_cantidad, id_prod))
+    sql = """
+    UPDATE Producto
+    SET costo = %s, inventario = %s
+    WHERE id_producto = %s
+    """
+    cursor.execute(sql, (costo, inventario, id_producto))
     miConexion.commit()
 
-    print("Inventario actualizado.")
+    if cursor.rowcount == 0:
+        print("No existe un producto con ese ID.")
+    else:
+        print("Producto actualizado correctamente.")
 
 
 def eliminar_inventario():
-    id_prod = input("ID del producto: ")
-    cursor.execute("DELETE FROM inventario WHERE id_producto=%s", (id_prod,))
-    miConexion.commit()
-    print("Producto eliminado.")
+    print("\n===== ELIMINAR PRODUCTO EN EL INVENTARIO=====")
+    id_producto = input("ID del producto a eliminar: ")
 
+    sql = "DELETE FROM Producto WHERE id_producto = %s"
+    cursor.execute(sql, (id_producto,))
+    miConexion.commit()
+
+    if cursor.rowcount == 0:
+        print("No existe un producto con ese ID.")
+    else:
+        print("Producto eliminado correctamente.")
 
 menu_principal()
