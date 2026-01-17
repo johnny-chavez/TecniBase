@@ -414,6 +414,46 @@ CREATE TABLE `venta_producto` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+-- TRIGGERS
+
+-- 1
+DELIMITER //
+
+CREATE TRIGGER trg_validar_stock_producto
+BEFORE INSERT ON venta_producto
+FOR EACH ROW
+BEGIN
+    DECLARE stock_actual INT;
+
+    SELECT inventario
+    INTO stock_actual
+    FROM producto
+    WHERE id_producto = NEW.id_producto;
+
+    IF stock_actual < NEW.cantidad THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Stock insuficiente para realizar la venta';
+    END IF;
+END;
+//
+  
+-- 2
+  
+CREATE TRIGGER trg_actualizar_inventario
+AFTER INSERT ON venta_producto
+FOR EACH ROW
+BEGIN
+    UPDATE producto
+    SET inventario = inventario - NEW.cantidad
+    WHERE id_producto = NEW.id_producto;
+END;
+//
+
+DELIMITER ;
+
+
+
 --
 -- Dumping data for table `venta_producto`
 --
@@ -511,3 +551,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-01-17 11:26:50
+
