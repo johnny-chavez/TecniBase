@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `tecnibase` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `tecnibase`;
 -- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --
 -- Host: localhost    Database: tecnibase
@@ -21,8 +23,7 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 -- GTID state at the beginning of the backup 
 --
 
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '5fa962ab-c3f9-11f0-918e-4c82a99b7562:1-88,
-87bddb3a-d838-11f0-bc8a-c03eba0ef86d:1-59';
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '87bddb3a-d838-11f0-bc8a-c03eba0ef86d:1-185';
 
 --
 -- Table structure for table `catalogo`
@@ -78,6 +79,25 @@ LOCK TABLES `cliente` WRITE;
 INSERT INTO `cliente` VALUES (1,'Innovación Tecnológica S.A.','1792500123001','022345678','info@innotec.com',NULL,NULL,'empresa'),(2,'Ana María',NULL,'0998765432','ana.m@gmail.com','1705801234','Villacís','persona'),(3,'Distribuidora Eléctrica Ltda.','0991234567001','042987654','ventas@electrica.com',NULL,NULL,'empresa'),(4,'Carlos Andrés',NULL,'0963214587','carlos.a@outlook.com','1309456789','Guzmán','persona'),(5,'Servicios Rápidos Cía. Ltda.','1790101010001','023300900',NULL,NULL,NULL,'empresa'),(6,'Sofía',NULL,'0991122334','sofia.r@live.com','0502123456','Rojas','persona'),(7,'Ferretería Central','0600123456001','032789456',NULL,NULL,NULL,'empresa'),(8,'José Luis',NULL,'0995556667','jose.l@yahoo.com','1801765432','Mora','persona'),(9,'Consultoría XYZ','1798765432001','026543210','contacto@cxyz.net',NULL,NULL,'empresa'),(10,'Gabriela',NULL,'0987654321','gabriela.f@mail.com','1710101010','Fernández','persona');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `detalleventas`
+--
+
+DROP TABLE IF EXISTS `detalleventas`;
+/*!50001 DROP VIEW IF EXISTS `detalleventas`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `detalleventas` AS SELECT 
+ 1 AS `nombre`,
+ 1 AS `apellido_persona`,
+ 1 AS `nro_factura`,
+ 1 AS `monto_total`,
+ 1 AS `fecha_emision`,
+ 1 AS `producto_descripcion`,
+ 1 AS `cantidad`,
+ 1 AS `tipo_servicio`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `empleado`
@@ -166,6 +186,60 @@ LOCK TABLES `factura` WRITE;
 INSERT INTO `factura` VALUES (1,1001,'2025-10-01',45.50),(2,1002,'2025-10-01',120.00),(3,1003,'2025-10-02',75.99),(4,1004,'2025-10-03',89.50),(5,1005,'2025-10-03',50.00),(6,1006,'2025-10-04',250.75),(7,1007,'2025-10-05',30.00),(8,1008,'2025-10-06',95.50),(9,1009,'2025-10-06',400.00),(10,1010,'2025-10-07',65.00);
 /*!40000 ALTER TABLE `factura` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `facturaservicio`
+--
+
+DROP TABLE IF EXISTS `facturaservicio`;
+/*!50001 DROP VIEW IF EXISTS `facturaservicio`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `facturaservicio` AS SELECT 
+ 1 AS `nro_factura`,
+ 1 AS `fecha_emision`,
+ 1 AS `monto_total`,
+ 1 AS `tipo_servicio`,
+ 1 AS `categoria_servicio`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `infoinventario`
+--
+
+DROP TABLE IF EXISTS `infoinventario`;
+/*!50001 DROP VIEW IF EXISTS `infoinventario`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `infoinventario` AS SELECT 
+ 1 AS `id_producto`,
+ 1 AS `marca`,
+ 1 AS `descripcion`,
+ 1 AS `stock`,
+ 1 AS `costo`,
+ 1 AS `proveedor`,
+ 1 AS `categoria_nombre`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `infoserviciotecnico`
+--
+
+DROP TABLE IF EXISTS `infoserviciotecnico`;
+/*!50001 DROP VIEW IF EXISTS `infoserviciotecnico`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `infoserviciotecnico` AS SELECT 
+ 1 AS `id_empleado`,
+ 1 AS `nombre_empleado`,
+ 1 AS `id_equipo`,
+ 1 AS `modelo_equipo`,
+ 1 AS `tipo_equipo`,
+ 1 AS `estado_equipo`,
+ 1 AS `descripcion_servicio`,
+ 1 AS `nombre_cliente`,
+ 1 AS `apellido_cliente`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `producto`
@@ -353,6 +427,78 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'tecnibase'
 --
+
+--
+-- Final view structure for view `detalleventas`
+--
+
+/*!50001 DROP VIEW IF EXISTS `detalleventas`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb3 */;
+/*!50001 SET character_set_results     = utf8mb3 */;
+/*!50001 SET collation_connection      = utf8mb3_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `detalleventas` AS select `c`.`nombre` AS `nombre`,`c`.`apellido_persona` AS `apellido_persona`,`f`.`nro_factura` AS `nro_factura`,`f`.`monto_total` AS `monto_total`,`f`.`fecha_emision` AS `fecha_emision`,`p`.`descripcion` AS `producto_descripcion`,`vp`.`cantidad` AS `cantidad`,`s`.`tipo_servicio` AS `tipo_servicio` from (((((`factura` `f` join `servicio_prestado` `s` on((`f`.`id_servicio` = `s`.`id_servicio`))) join `cliente` `c` on((`s`.`id_cliente` = `c`.`id_cliente`))) left join `venta` `v` on((`s`.`id_servicio` = `v`.`id_servicio`))) left join `venta_producto` `vp` on(((`v`.`id_servicio` = `vp`.`id_servicio`) and (`v`.`id_venta` = `vp`.`id_venta`)))) left join `producto` `p` on((`vp`.`id_producto` = `p`.`id_producto`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `facturaservicio`
+--
+
+/*!50001 DROP VIEW IF EXISTS `facturaservicio`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb3 */;
+/*!50001 SET character_set_results     = utf8mb3 */;
+/*!50001 SET collation_connection      = utf8mb3_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `facturaservicio` AS select `f`.`nro_factura` AS `nro_factura`,`f`.`fecha_emision` AS `fecha_emision`,`f`.`monto_total` AS `monto_total`,`s`.`tipo_servicio` AS `tipo_servicio`,(case when (`s`.`tipo_servicio` = 'S') then 'Servicio Técnico' when (`s`.`tipo_servicio` = 'V') then 'Venta Directa' else 'Otro' end) AS `categoria_servicio` from (`factura` `f` join `servicio_prestado` `s` on((`f`.`id_servicio` = `s`.`id_servicio`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `infoinventario`
+--
+
+/*!50001 DROP VIEW IF EXISTS `infoinventario`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb3 */;
+/*!50001 SET character_set_results     = utf8mb3 */;
+/*!50001 SET collation_connection      = utf8mb3_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `infoinventario` AS select `p`.`id_producto` AS `id_producto`,`p`.`marca` AS `marca`,`p`.`descripcion` AS `descripcion`,`p`.`inventario` AS `stock`,`p`.`costo` AS `costo`,`p`.`proveedor` AS `proveedor`,`cat`.`nombre` AS `categoria_nombre` from (`producto` `p` join `catalogo` `cat` on((`p`.`id_catalogo` = `cat`.`id_catalogo`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `infoserviciotecnico`
+--
+
+/*!50001 DROP VIEW IF EXISTS `infoserviciotecnico`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb3 */;
+/*!50001 SET character_set_results     = utf8mb3 */;
+/*!50001 SET collation_connection      = utf8mb3_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `infoserviciotecnico` AS select `e`.`id_empleado` AS `id_empleado`,`e`.`nombre` AS `nombre_empleado`,`eq`.`id_equipo` AS `id_equipo`,`eq`.`modelo` AS `modelo_equipo`,`eq`.`tipo_equipo` AS `tipo_equipo`,`eq`.`estado_equipo` AS `estado_equipo`,`st`.`descripcion` AS `descripcion_servicio`,`c`.`nombre` AS `nombre_cliente`,`c`.`apellido_persona` AS `apellido_cliente` from (((`servicio_tecnico` `st` join `empleado` `e` on((`st`.`idEmpleado` = `e`.`id_empleado`))) join `equipo` `eq` on((`st`.`id_equipo` = `eq`.`id_equipo`))) join `cliente` `c` on((`eq`.`id_cliente` = `c`.`id_cliente`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -364,4 +510,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-05 22:07:06
+-- Dump completed on 2026-01-17 11:26:50
