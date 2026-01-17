@@ -3,7 +3,7 @@ def menu_principal():
     while True:
         print("\n========== MENÚ PRINCIPAL ==========")
         print("1. Gestión de clientes")
-        print("2. Registrar Servicio")
+        print("2. Gestion de Servicio")
         print("3. Control Técnico")
         print("4. Registrar Venta / Factura")
         print("5. Gestión de Inventario")
@@ -13,13 +13,13 @@ def menu_principal():
         if opcion == "1":
             menu_cliente()
         elif opcion == "2":
-            registrar_servicio()
+            menu_servicio
         elif opcion == "3":
             control_tecnico()
         elif opcion == "4":
-            registrar_venta()
+            menu_venta_factura()
         elif opcion == "5":
-            gestion_inventario()
+            menu_inventario()
         elif opcion == "6":
             print("Saliendo...")
             break
