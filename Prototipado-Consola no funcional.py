@@ -8,7 +8,7 @@ def menu_principal():
         print("4. Registrar Venta / Factura")
         print("5. Gestión de Inventario")
         print("6. Salir")
-        opcion = input("Seleccione una opción: ")
+        opcion = input("Seleccione una opción: ").strip()
 
         if opcion == "1":
             menu_cliente()
@@ -36,7 +36,7 @@ def menu_cliente():
         print("4. Eliminar cliente")
         print("5. Volver")
 
-        opcion = input("Seleccione una opción: ")
+        opcion = input("Seleccione una opción: ").strip()
 
         if opcion == "1":
             registrar_cliente()   
@@ -56,14 +56,14 @@ def menu_cliente():
 # Opciones del menú clientes
 def registrar_cliente():
     print("\n----- REGISTRAR CLIENTE -----")
-    tipo = input("Tipo de cliente (persona/empresa): ").lower()
-    nombre = input("Nombre: ")
-    telefono = input("Teléfono: ")
-    correo = input("Correo electrónico: ")
+    tipo = input("Tipo de cliente (persona/empresa): ").lower().strip()
+    nombre = input("Nombre: ").strip()
+    telefono = input("Teléfono: ").strip()
+    correo = input("Correo electrónico: ").strip()
 
     if tipo == "persona":
-        apellido = input("Apellido:")
-        cedula = input("Cédula: ")
+        apellido = input("Apellido:").strip()
+        cedula = input("Cédula: ").strip()
 
         sql = """ INSERT INTO cliente (nombre, apellido_persona, cedula_persona, telefono, correo, tipo_cliente)
         VALUES (%s, %s, %s, %s, %s, %s) """
@@ -384,18 +384,39 @@ def gestion_inventario():
 
 
 def consultar_inventario():
-    print("\n===== LISTADO DE PRODUCTOS =====")
+    print("\n===== CONSULTA DE INVENTARIO =====")
+    print("1. Ver todos los productos")
+    print("2. Ver productos por proveedor")
 
-    sql = "SELECT * FROM Producto"
-    cursor.execute(sql)
-    productos = cursor.fetchall()
+    opcion = input("Seleccione una opción (1 o 2): ").strip()
+
+    if opcion == "1":
+        sql = "SELECT * FROM Producto"
+        cursor.execute(sql)
+        productos = cursor.fetchall()
+
+    elif opcion == "2":
+        proveedor = input("Ingrese el nombre del proveedor: ").strip()
+
+        sql = """
+            SELECT *
+            FROM Producto
+            WHERE LOWER(proveedor) = LOWER(%s)
+        """
+        cursor.execute(sql, (proveedor,))
+        productos = cursor.fetchall()
+
+    else:
+        print("Opción inválida.")
+        return
 
     if len(productos) == 0:
-        print("No existen productos registrados.")
+        print("No existen productos para mostrar.")
     else:
-        print("Productos registrados:")
+        print("\nProductos encontrados:")
         for p in productos:
             print(p)
+
 
 
 def editar_inventario():
