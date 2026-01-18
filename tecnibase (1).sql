@@ -108,7 +108,7 @@ DROP TABLE IF EXISTS `empleado`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `empleado` (
   `id_empleado` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) NOT NULL,
+  `nombre` varchar(100) NOT NULL UNIQUE,
   `apellido` varchar(100) NOT NULL,
   `cedula` varchar(100) DEFAULT NULL,
   `telefono` varchar(20) DEFAULT NULL,
@@ -1042,48 +1042,28 @@ DELIMITER ;
 
 -- DELETE DE LA TABLA EMPLEADO
 DROP PROCEDURE IF EXISTS sp_delete_empleado;
-
 DELIMITER $$
 
-CREATE PROCEDURE sp_delete_empleado (
-    IN p_id_empleado INT
+CREATE PROCEDURE sp_delete_empleado(
+    IN p_cedula CHAR(10)
 )
 BEGIN
-    DECLARE v_existe INT;
-
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
+    -- Verificar que el empleado exista
+    IF NOT EXISTS (
+        SELECT 1
+        FROM empleado
+        WHERE cedula = p_cedula
+    ) THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Error al eliminar el empleado';
-    END;
-
-    START TRANSACTION;
-
-    -- VALIDAR ID
-    IF p_id_empleado IS NULL THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'El ID del empleado es obligatorio';
+        SET MESSAGE_TEXT = 'No existe un empleado con esa cédula';
+    ELSE
+        DELETE FROM empleado
+        WHERE cedula = p_cedula;
     END IF;
-
-    -- VALIDAR EXISTENCIA
-    SELECT COUNT(*) INTO v_existe
-    FROM empleado
-    WHERE id_empleado = p_id_empleado;
-
-    IF v_existe = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'El empleado no existe';
-    END IF;
-
-    -- ELIMINACIÓN
-    DELETE FROM empleado
-    WHERE id_empleado = p_id_empleado;
-
-    COMMIT;
 END$$
 
 DELIMITER ;
+
 
 -- INSERT DE LA TABLA FACTURA
 DROP PROCEDURE IF EXISTS sp_insert_factura;
@@ -2447,6 +2427,3 @@ CALL sp_update_factura(
 );
 
 */
-
-
-
