@@ -15,7 +15,7 @@ def menu_principal():
         if opcion == "1":
             menu_cliente()
         elif opcion == "2":
-            menu_servicio
+            menu_servicio()
         elif opcion == "3":
             control_tecnico()
         elif opcion == "4":
@@ -61,31 +61,38 @@ def menu_cliente():
 
 # Opciones del menú clientes
 def registrar_cliente():
-    print("\n----- REGISTRAR CLIENTE -----")
-    tipo = input("Tipo de cliente (persona/empresa): ").lower()
-    nombre = input("Nombre: ")
-    telefono = input("Teléfono: ")
-    correo = input("Correo electrónico: ")
+    try:
+        
+        print("\n----- REGISTRAR CLIENTE -----")
+        tipo = input("Tipo de cliente (persona/empresa): ").lower()
+        nombre = input("Nombre: ")
+        telefono = input("Teléfono: ")
+        correo = input("Correo electrónico: ")
 
-    if tipo == "persona":
-        apellido = input("Apellido:")
-        cedula = input("Cédula: ")
+        if tipo == "persona":
+            
+            apellido = input("Apellido:")
+            cedula = input("Cédula: ")
 
-        args = (nombre,None,telefono,correo,cedula,apellido,tipo)
+            args = (nombre,None,telefono,correo,cedula,apellido,tipo)
 
-        cursor.callproc("sp_insert_cliente",args)
-    elif tipo == "empresa":
-        ruc = input("RUC empresa: ")
+            cursor.callproc("sp_insert_cliente",args)
+            
+        elif tipo == "empresa":
+            
+            ruc = input("RUC empresa: ")
 
-        args = (nombre,ruc,telefono,correo,cedula,None,None)
+            args = (nombre,ruc,telefono,correo,cedula,None,None)
 
-        cursor.callproc("sp_insert_cliente",args)
-    else:
-        print("Tipo invalido")
-        return
-    
-    miConexion.commit()
-    print("Cliente registrado.")
+            cursor.callproc("sp_insert_cliente",args)
+        else:
+            print("Tipo invalido")
+            return
+        
+        print("Cliente registrado.")
+
+    except Exception as e:
+                print(e)
 
 def listar_clientes():
     print("\n===== LISTADO DE CLIENTES =====")
@@ -99,37 +106,41 @@ def listar_clientes():
             print(c)
 
 def editar_cliente():
-    print("\n===== EDITAR CLIENTE =====")
-    id_cliente = input("ID del cliente a editar: ")
-    nombre = input("Nombre: ")
-    ruc = input("RUC empresa: ")
-    telefono = input("Nuevo teléfono: ")
-    correo = input("Nuevo correo: ")
-    cedula = input("Cédula: ")
-    apellido = input("Apellido:")
-    tipo = input("Tipo de cliente (persona/empresa): ").lower()
+    try:
+        print("\n===== EDITAR CLIENTE =====")
+        id_cliente = input("ID del cliente a editar: ")
+        nombre = input("Nombre: ")
+        ruc = input("RUC empresa: ")
+        telefono = input("Nuevo teléfono: ")
+        correo = input("Nuevo correo: ")
+        cedula = input("Cédula: ")
+        apellido = input("Apellido:")
+        tipo = input("Tipo de cliente (persona/empresa): ").lower()
 
-    args = (id_cliente,nombre,ruc,telefono,correo,cedula,apellido,tipo)
+        args = (id_cliente,nombre,ruc,telefono,correo,cedula,apellido,tipo)
 
-    cursor.callproc("sp_update_cliente",args)
-    miConexion.commit()
+        cursor.callproc("sp_update_cliente",args)
+    except Exception as e:
+            print(e)
 
 def eliminar_cliente():
-    print("\n===== ELIMINAR CLIENTE =====")
-    id_cliente = input("ID del cliente a eliminar: ")
+    try:
+        print("\n===== ELIMINAR CLIENTE =====")
+        id_cliente = input("ID del cliente a eliminar: ")
 
-    confirmacion = input("¿Seguro que desea eliminar este cliente? (s/n): ").lower()
-    if confirmacion != "s":
-        print("Operacion cancelada")
-        return
+        confirmacion = input("¿Seguro que desea eliminar este cliente? (s/n): ").lower()
+        if confirmacion != "s":
+            print("Operacion cancelada")
+            return
     
-    cursor.callproc("sp_delete_cliente",(id_cliente,))
-    miConexion.commit()
-    
-    if cursor.rowcount == 0:
-        print("No existe un cliente con ese ID")
-    else:
-        print ("Cliente eliminado correctamente")
+        cursor.callproc("sp_delete_cliente",(id_cliente,))
+
+        if cursor.rowcount == 0:
+            print("No existe un cliente con ese ID")
+        else:
+            print ("Cliente eliminado correctamente")
+    except Exception as e:
+            print(e)
 
 #Opciones Del menú servicios
 
@@ -159,45 +170,57 @@ def menu_servicio():
 
 
 def registrar_servicio():
-    print("\n----- REGISTRAR SERVICIO -----")
-    fecha = input("Fecha del servicio (YYYY-MM-DD): ")
-    id_cliente = input("ID del cliente: ")
-    tipo = input("Tipo de servicio (S o V): ")
+    try:
+        print("\n----- REGISTRAR SERVICIO -----")
+        fecha = input("Fecha del servicio (YYYY-MM-DD): ")
+        id_cliente = input("ID del cliente: ")
+        tipo = input("Tipo de servicio (S o V): ")
 
-    args = (fecha,id_cliente,tipo)
+        args = (fecha,id_cliente,tipo)
 
-    cursor.callproc("sp_insert_servicio_prestado",args)
-    miConexion.commit()
+        cursor.callproc("sp_insert_servicio_prestado",args)
 
-    print("Servicio registrado.")
-
+        print("Servicio registrado.")
+    except Exception as e:
+            print(e)
 
 def consultar_servicio():
+
+    print("\n===== LISTADO DE SERVICIOS =====")
     cursor.execute("SELECT * FROM servicio_prestado")
-    for s in cursor.fetchall():
-        print(s)
+    servicios = cursor.fetchall()
+
+    if not servicios:
+        print("No hay servicios registrados.")
+    else:
+        for c in servicios:
+            print(c)
 
 
 def editar_servicio():
-    id_servicio = input("ID del servicio a editar: ")
-    fecha = input("Fecha del servicio (YYYY-MM-DD): ")
-    id_cliente = input("ID del cliente: ")
-    nuevo_tipo = input("Nuevo tipo de servicio: ")
+    try:
+        id_servicio = input("ID del servicio a editar: ")
+        fecha = input("Fecha del servicio (YYYY-MM-DD): ")
+        id_cliente = input("ID del cliente: ")
+        nuevo_tipo = input("Nuevo tipo de servicio: ")
 
-    args = (id_servicio,fecha,id_cliente,nuevo_tipo)
-    cursor.callproc("sp_update_servicio_prestado", args)
-    miConexion.commit()
+        args = (id_servicio,fecha,id_cliente,nuevo_tipo)
+        cursor.callproc("sp_update_servicio_prestado", args)
 
-    print("Servicio actualizado.")
+        print("Servicio actualizado.")
+    except Exception as e:
+            print(e)
 
 
 def eliminar_servicio():
-    id_servicio = input("ID del servicio a eliminar: ")
+    try:
+        id_servicio = input("ID del servicio a eliminar: ")
 
-    cursor.callproc("sp_delete_servicio_prestado",(id_servicio,))
+        cursor.callproc("sp_delete_servicio_prestado",(id_servicio,))
 
-    miConexion.commit()
-    print("Servicio eliminado.")
+        print("Servicio eliminado.")
+    except Exception as e:
+            print(e)
 
 
 #control tecnico
@@ -232,49 +255,57 @@ def listar_servicio_tecnicos():
     clientes = cursor.fetchall()
 
     if not clientes:
-        print("No hay servicios registrados.")
+        print("No hay servicios tecnicos registrados.")
     else:
         for c in clientes:
             print(c)
 
 def registrar_servicio_tecnico():
-    id_servicio = input("Ingrese id del servicio prestado: ")
-    tipo = input("Ingrese el tipo de servicio: ")
-    descripcion = input("Ingrese su descripcion: ")
-    piezas_utilizadas = input("Ingrese piezas utilizadas: ")
-    id_equipo = input("Ingrese Id del equipo reparado: ")
-    id_empleado = input("Ingrese id del empleado dueño del equipo: ")
+    try:
+        id_servicio = input("Ingrese id del servicio prestado: ")
+        tipo = input("Ingrese el tipo de servicio: ")
+        descripcion = input("Ingrese su descripcion: ")
+        piezas_utilizadas = input("Ingrese piezas utilizadas: ")
+        id_equipo = input("Ingrese Id del equipo reparado: ")
+        id_empleado = input("Ingrese id del empleado dueño del equipo: ")
 
-    args = (id_servicio,tipo,descripcion,piezas_utilizadas,id_equipo,id_empleado)
+        args = (id_servicio,tipo,descripcion,piezas_utilizadas,id_equipo,id_empleado)
 
-    cursor.callproc("sp_insert_servicio_tecnico",args)
+        cursor.callproc("sp_insert_servicio_tecnico",args)
 
-    miConexion.commit()
-    print("Servicio tecnico Registrado.")
+        print("Servicio tecnico Registrado.")
+
+    except Exception as e:
+            print(e)
 
 def actualizar_servicio_tecnico():
-    id_servicio = input("Ingrese id del servicio tecnico: ")
-    tipo = input("Ingrese el tipo de servicio: ")
-    descripcion = input("Ingrese su descripcion: ")
-    piezas_utilizadas = input("Ingrese piezas utilizadas: ")
-    id_equipo = input("Ingrese Id del equipo reparado: ")
-    id_empleado = input("Ingrese id del empleado dueño del equipo: ")
+    try:
+        id_servicio = input("Ingrese id del servicio tecnico: ")
+        tipo = input("Ingrese el tipo de servicio: ")
+        descripcion = input("Ingrese su descripcion: ")
+        piezas_utilizadas = input("Ingrese piezas utilizadas: ")
+        id_equipo = input("Ingrese Id del equipo reparado: ")
+        id_empleado = input("Ingrese id del empleado dueño del equipo: ")
 
-    args = (id_servicio,tipo,descripcion,piezas_utilizadas,id_equipo,id_empleado)
+        args = (id_servicio,tipo,descripcion,piezas_utilizadas,id_equipo,id_empleado)
 
-    cursor.callproc("sp_update_servicio_tecnico",args)
+        cursor.callproc("sp_update_servicio_tecnico",args)
 
-    miConexion.commit()
-    print("Servicio tecnico Actualizado.")
+        print("Servicio tecnico Actualizado.")
+
+    except Exception as e:
+            print(e)
 
 def eliminar_servicio_tecnico():
-    id_servicio_tec = input("ID del servicio tecnico a eliminar: ")
+    try:
+        id_servicio_tec = input("ID del servicio tecnico a eliminar: ")
 
-    cursor.callproc("sp_delete_servicio_tecnico",(id_servicio_tec,))
+        cursor.callproc("sp_delete_servicio_tecnico",(id_servicio_tec,))
 
-    miConexion.commit()
-    print("Servicio tecnico eliminado.")
+        print("Servicio tecnico eliminado.")
 
+    except Exception as e:
+            print(e)
 
 #registrar venta/factura
 
@@ -316,86 +347,123 @@ def menu_venta_factura():
 
 
 def registrar_venta():
-    print("\n----- REGISTRAR VENTA -----")
+    try:
 
-    id_servicio = input("ID del servicio solicitado: ")
-    tipo_pago = input("Método de pago: ")
-    id_cajero = input("ID del cajero: ")
+        print("\n----- REGISTRAR VENTA -----")
 
-    args = (id_servicio,tipo_pago,id_cajero)
+        id_servicio = input("ID del servicio solicitado: ")
+        tipo_pago = input("Método de pago: ")
+        id_cajero = input("ID del cajero: ")
 
-    cursor.callproc("sp_insert_venta",args)
-    miConexion.commit()
+        args = (id_servicio,tipo_pago,id_cajero)
 
-    print("Pago registrado y factura generada.")
+        cursor.callproc("sp_insert_venta",args)
+
+        print("Pago registrado y factura generada.")
+
+    except Exception as e:
+            print(e)
 
 
 def consultar_venta():
+    print("\n===== LISTADO DE VENTAS =====")
     cursor.execute("SELECT * FROM venta")
-    for v in cursor.fetchall():
-        print(v)
+    venta = cursor.fetchall()
+
+    if not venta:
+        print("No hay ventas registradas.")
+    else:
+        for c in venta:
+            print(c)
 
 
 def editar_venta():
-    id_venta = input("ID de la venta: ")
-    tipo_pago = input("Nuevo método de pago: ")
-    id_cajero = input("ID del cajero: ")
+    try:
 
-    args = (id_venta,tipo_pago,id_cajero)
-    cursor.callproc("sp_update_venta", args)
-    miConexion.commit()
+        id_venta = input("ID de la venta: ")
+        tipo_pago = input("Nuevo método de pago: ")
+        id_cajero = input("ID del cajero: ")
 
-    print("Venta actualizada.")
+        args = (id_venta,tipo_pago,id_cajero)
+        cursor.callproc("sp_update_venta", args)
+
+        print("Venta actualizada.")
+
+    except Exception as e:
+            print(e)
 
 
 def eliminar_venta():
-    id_venta = input("ID de la venta: ")
-    cursor.callproc("sp_delete_venta", (id_venta,))
-    miConexion.commit()
-    print("Venta eliminada.")
+    try:
+        p_id_venta = input("ID de la venta: ")
+        cursor.callproc("sp_delete_venta", (p_id_venta,))
+        
+        print("Venta eliminada.")
+
+    except Exception as e:
+            print(e)
 
 
 def registrar_factura():
-    print("Tenga en cuenta que solo puede existir una factura por servicio prestado")
-    print("")
-    id_servicio = input("ID del servicio: ")
-    nro = input("Número de factura: ")
-    fecha = input("Fecha de emisión (YYYY-MM-DD): ")
-    total = input("Monto total: ")
+    try:
 
-    args = (id_servicio,nro,fecha,total)
+        print("Tenga en cuenta que solo puede existir una factura por servicio prestado")
+        print("")
+        id_servicio = input("ID del servicio: ")
+        nro = input("Número de factura: ")
+        fecha = input("Fecha de emisión (YYYY-MM-DD): ")
+        total = input("Monto total: ")
 
-    cursor.callproc("sp_insert_factura",args)
-    miConexion.commit()
+        args = (id_servicio,nro,fecha,total)
 
-    print("Factura registrada.")
+        cursor.callproc("sp_insert_factura",args)
+
+        print("Factura registrada.")
+
+    except Exception as e:
+            print(e)
 
 
 def consultar_factura():
+
+    print("\n===== LISTADO DE FACTURAS =====")
     cursor.execute("SELECT * FROM factura")
-    for f in cursor.fetchall():
-        print(f)
+    factura = cursor.fetchall()
+
+    if not factura:
+        print("No hay facturas registradas.")
+    else:
+        for c in factura:
+            print(c)
 
 
 def editar_factura():
-    id_factura = input("ID del servicio: ")
-    nro = input("Nuevo número de factura: ")
-    fecha = input("Nueva Fecha de emisión (YYYY-MM-DD): ")
-    total = input("Nuevo Monto total: ")
+    try:
 
-    args = (id_factura,nro,fecha,total)
-    cursor.callproc("sp_update_factura",args)
-    miConexion.commit()
+        id_factura = input("ID del servicio: ")
+        nro = input("Nuevo número de factura: ")
+        fecha = input("Nueva Fecha de emisión (YYYY-MM-DD): ")
+        total = input("Nuevo Monto total: ")
 
-    print("Factura actualizada.")
+        args = (id_factura,nro,fecha,total)
+        cursor.callproc("sp_update_factura",args)
+
+        print("Factura actualizada.")
+
+    except Exception as e:
+            print(e)
 
 
 def eliminar_factura():
-    id_servicio = input("ID del servicio: ")
-    cursor.callproc("sp_delete_factura",(id_servicio,))
-    miConexion.commit()
-    print("Factura eliminada.")
-    
+    try:
+        
+        id_servicio = input("ID del servicio: ")
+        cursor.callproc("sp_delete_factura",(id_servicio,))
+        
+        print("Factura eliminada.")
+
+    except Exception as e:
+            print(e)
 
 #gestion inventario
 def menu_inventario():
@@ -424,67 +492,77 @@ def menu_inventario():
 
 
 def gestion_inventario():
-    print("\n===== REGISTRAR PRODUCTO =====")
-    id_catalogo = input("ID del catálogo: ")
-    marca = input("Marca: ")
-    descripcion = input("Descripción: ")
-    costo = input("Costo: ")
-    proveedor = input("Proveedor: ")
-    inventario = input("Cantidad en inventario: ")
-    
-    args = (id_catalogo,marca,descripcion,costo,proveedor,inventario)
-    cursor.callproc("sp_insert_producto",args)
-    miConexion.commit()
+    try:
 
-    print("Producto registrado correctamente")
+        print("\n===== REGISTRAR PRODUCTO =====")
+        id_catalogo = input("ID del catálogo: ")
+        marca = input("Marca: ")
+        descripcion = input("Descripción: ")
+        costo = input("Costo: ")
+        proveedor = input("Proveedor: ")
+        inventario = input("Cantidad en inventario: ")
+        
+        args = (id_catalogo,marca,descripcion,costo,proveedor,inventario)
+        cursor.callproc("sp_insert_producto",args)
+
+        print("Producto registrado correctamente")
+    
+    except Exception as e:
+            print(e)
 
 
 def consultar_inventario():
-    print("\n===== LISTADO DE PRODUCTOS =====")
 
-    sql = "SELECT * FROM Producto"
-    cursor.execute(sql)
+    print("\n===== LISTADO DE PRODUCTOS =====")
+    cursor.execute("SELECT * FROM Producto")
     productos = cursor.fetchall()
 
-    if len(productos) == 0:
-        print("No existen productos registrados.")
+    if not productos:
+        print("No hay productos registrados.")
     else:
-        print("Productos registrados:")
-        for p in productos:
-            print(p)
+        for c in productos:
+            print(c)
+
 
 
 def editar_inventario():
-    print("\n===== EDITAR PRODUCTO EN EL INVENTARIO=====")
-    id_producto = input("ID del producto: ")
-    id_catalogo = input("Nuevo ID del catálogo: ")
-    marca = input("Nueva Marca: ")
-    descripcion = input("Nueva Descripción: ")
-    costo = input("Nuevo Costo: ")
-    proveedor = input("Nuevo Proveedor: ")
-    inventario = input("Nueva Cantidad en inventario: ")
-    
-    args = (id_producto,id_catalogo,marca,descripcion,costo,proveedor,inventario)
-    cursor.callproc("sp_update_producto",args)
-    miConexion.commit()
+    try:
+        print("\n===== EDITAR PRODUCTO EN EL INVENTARIO=====")
+        id_producto = input("ID del producto: ")
+        id_catalogo = input("Nuevo ID del catálogo: ")
+        marca = input("Nueva Marca: ")
+        descripcion = input("Nueva Descripción: ")
+        costo = input("Nuevo Costo: ")
+        proveedor = input("Nuevo Proveedor: ")
+        inventario = input("Nueva Cantidad en inventario: ")
+        
+        args = (id_producto,id_catalogo,marca,descripcion,costo,proveedor,inventario)
+        cursor.callproc("sp_update_producto",args)
 
-    if cursor.rowcount == 0:
-        print("No existe un producto con ese ID.")
-    else:
-        print("Producto actualizado correctamente.")
+        if cursor.rowcount == 0:
+            print("No existe un producto con ese ID.")
+        else:
+            print("Producto actualizado correctamente.")
+
+    except Exception as e:
+            print(e)
 
 
 def eliminar_inventario():
-    print("\n===== ELIMINAR PRODUCTO EN EL INVENTARIO=====")
-    id_producto = input("ID del producto a eliminar: ")
+    try:
 
-    cursor.callproc("sp_delete_producto",(id_producto,))
-    miConexion.commit()
+        print("\n===== ELIMINAR PRODUCTO EN EL INVENTARIO=====")
+        id_producto = input("ID del producto a eliminar: ")
 
-    if cursor.rowcount == 0:
-        print("No existe un producto con ese ID.")
-    else:
-        print("Producto eliminado correctamente.")
+        cursor.callproc("sp_delete_producto",(id_producto,))
+
+        if cursor.rowcount == 0:
+            print("No existe un producto con ese ID.")
+        else:
+            print("Producto eliminado correctamente.")
+
+    except Exception as e:
+            print(e)
     
 #gestion Empleados
 def menu_empleados():
@@ -513,64 +591,74 @@ def menu_empleados():
 
 
 def gestion_empleado():
-    print("\n===== REGISTRAR EMPLEADO =====")
-    nombre = input("nombre del empleado: ")
-    apellido = input("apellido del empleado: ")
-    cedula = input("cedula del empleado: ")
-    telefono = input("telefono del empleado: ")
-    tipo = input("tipo de del empleado (tecnico/cajero): ").lower()
-    
-    args = (nombre,apellido,cedula,telefono,tipo)
-    cursor.callproc("sp_insert_empleado",args)
-    miConexion.commit()
+    try:
 
-    print("Producto registrado correctamente")
+        print("\n===== REGISTRAR EMPLEADO =====")
+        nombre = input("nombre del empleado: ")
+        apellido = input("apellido del empleado: ")
+        cedula = input("cedula del empleado: ")
+        telefono = input("telefono del empleado: ")
+        tipo = input("tipo de del empleado (tecnico/cajero): ").lower()
+        
+        args = (nombre,apellido,cedula,telefono,tipo)
+        cursor.callproc("sp_insert_empleado",args)
 
+        print("Producto registrado correctamente")
+
+    except Exception as e:
+            print(e)
 
 def consultar_empleados():
+
     print("\n===== LISTADO DE EMPLEADOS =====")
+    cursor.execute("SELECT * FROM empleado")
+    empleados = cursor.fetchall()
 
-    sql = "SELECT * FROM empleado"
-    cursor.execute(sql)
-    productos = cursor.fetchall()
-
-    if len(productos) == 0:
-        print("No existen empleados registrados.")
+    if not empleados:
+        print("No hay empleados registrados.")
     else:
-        print("Productos registrados:")
-        for p in productos:
-            print(p)
+        for c in empleados:
+            print(c)
 
 
 def editar_empleado():
-    print("\n===== EDITAR EMPLEADO =====")
-    id_empleado = input("Ingrese el id del empleado: ")
-    nombre = input("nombre del empleado: ")
-    apellido = input("apellido del empleado: ")
-    cedula = input("cedula del empleado: ")
-    telefono = input("telefono del empleado: ")
-    tipo = input("tipo de del empleado (tecnico/cajero): ").lower()
-    
-    args = (id_empleado,nombre,apellido,cedula,telefono,tipo)
-    cursor.callproc("sp_update_empleado",args)
-    miConexion.commit()
-    if cursor.rowcount == 0:
-        print("No existe un producto con ese ID.")
-    else:
-        print("Producto actualizado correctamente.")
+    try:
+
+        print("\n===== EDITAR EMPLEADO =====")
+        id_empleado = input("Ingrese el id del empleado: ")
+        nombre = input("nombre del empleado: ")
+        apellido = input("apellido del empleado: ")
+        cedula = input("cedula del empleado: ")
+        telefono = input("telefono del empleado: ")
+        tipo = input("tipo de del empleado (tecnico/cajero): ").lower()
+        
+        args = (id_empleado,nombre,apellido,cedula,telefono,tipo)
+        cursor.callproc("sp_update_empleado",args)
+
+        if cursor.rowcount == 0:
+            print("No existe un empleado con ese ID.")
+        else:
+            print("Empleado actualizado correctamente.")
+
+    except Exception as e:
+            print(e)
 
 
 def eliminar_empleado():
-    print("\n===== ELIMINAR EMPLEADO =====")
-    cedula_empleado = input("ID del empleado a eliminar: ")
+    try:
 
-    cursor.callproc("sp_delete_empleado",(cedula_empleado,))
-    miConexion.commit()
+        print("\n===== ELIMINAR EMPLEADO =====")
+        cedula_empleado = input("CEDULA del empleado a eliminar: ")
 
-    if cursor.rowcount == 0:
-        print("No existe un producto con ese ID.")
-    else:
-        print("Producto eliminado correctamente.")
+        cursor.callproc("sp_delete_empleado",(cedula_empleado,))
+
+        if cursor.rowcount == 0:
+            print("No existe un empleado con esa Cedula.")
+        else:
+            print("Empleado eliminado correctamente.")
+
+    except Exception as e:
+            print(e)
 
     
 #gestion Equipo
@@ -600,84 +688,92 @@ def menu_equipo():
 
 
 def gestion_equipo():
-    print("\n----- REGISTRO DE EQUIPO -----")
-    marcha = input("Registrar marca del equipo: ")
-    modelo = input("Registrar modelo del equipo: ")
-    numero_serial = input("Registrar numero serial del equipo: ")
-    # Codigo para obtener la opcion de equipo
-    opcion_equipo = int(input("Ingrese el tipo de equipo, ingresando el numero de la opcion de la siguiente lista: \n 1)computadora \n 2)celular \n 3)impresora \n 4)No especificado"))
-    TIPO_DE_EQUIPO = { 1:"computadora", 2:"celular",3:"impresora",4:None}
+    try:
+        print("\n----- REGISTRO DE EQUIPO -----")
+        marcha = input("Registrar marca del equipo: ")
+        modelo = input("Registrar modelo del equipo: ")
+        numero_serial = input("Registrar numero serial del equipo: ")
+        # Codigo para obtener la opcion de equipo
+        opcion_equipo = int(input("Ingrese el tipo de equipo, ingresando el numero de la opcion de la siguiente lista: \n 1)computadora \n 2)celular \n 3)impresora \n 4)No especificado \n"))
+        TIPO_DE_EQUIPO = { 1:"computadora", 2:"celular",3:"impresora",4:None}
 
-    if opcion_equipo < 1 or opcion_equipo > 4:
-        print("Operacion cancelada, el numero de opcion no es valido")
-        return
-    
-    tipo_equipo = TIPO_DE_EQUIPO[opcion_equipo]
-    #
-    estado_equipo = input("Registrar estado del equipo: ")    
-    if estado_equipo == "": estado_equipo = None
+        if opcion_equipo < 1 or opcion_equipo > 4:
+            print("Operacion cancelada, el numero de opcion no es valido")
+            return
+        
+        tipo_equipo = TIPO_DE_EQUIPO[opcion_equipo]
+        #
+        estado_equipo = input("Registrar estado del equipo: ")    
+        if estado_equipo == "": estado_equipo = None
 
-    descripcion = input("Registrar descripcion del equipo: ")
-    if descripcion == "": descripcion = None
+        descripcion = input("Registrar descripcion del equipo: ")
+        if descripcion == "": descripcion = None
 
-    codigo_seguridad = input("Registrar codigo de seguridad del equipo: ")
-    if codigo_seguridad == "": codigo_seguridad = None
+        codigo_seguridad = input("Registrar codigo de seguridad del equipo: ")
+        if codigo_seguridad == "": codigo_seguridad = None
 
-    id_cliente = input("Registrar id del cliente del equipo: ")
-    if id_cliente == "": id_cliente = None
+        id_cliente = input("Registrar id del cliente del equipo: ")
+        if id_cliente == "": id_cliente = None
 
-    args = (marcha,modelo,numero_serial,tipo_equipo,estado_equipo,descripcion,codigo_seguridad,id_cliente)
-    cursor.callproc("sp_insert_equipo",args)
-    miConexion.commit()
+        args = (marcha,modelo,numero_serial,tipo_equipo,estado_equipo,descripcion,codigo_seguridad,id_cliente)
+        cursor.callproc("sp_insert_equipo",args)
 
-    print("Inventario actualizado.")
+        print("Inventario actualizado.")
 
+    except Exception as e:
+            print(e)
 
 def consultar_equipo():
+    
+    print("\n===== LISTADO DE EQUIPOS =====")
     cursor.execute("SELECT * FROM equipo")
-    for i in cursor.fetchall():
-        print(i)
+    equipos = cursor.fetchall()
+
+    if not equipos:
+        print("No hay equipos registrados.")
+    else:
+        for c in equipos:
+            print(c)
+
 
 
 def editar_equipo():
-    id_equipo = input("ID del equipo: ")
+    try:
+        id_equipo = input("ID del equipo: ")
+        
+        marcha = input("Registrar marca del equipo: ")
+        modelo = input("Registrar modelo del equipo: ")
+        numero_serial = input("Registrar numero serial del equipo: ")
 
-    if cursor.rowcount == 0:
-        print("No existe un equipo con ese ID")
-    else:
-        print ("Equipo editado correctamente")
-    
-    marcha = input("Registrar marca del equipo: ")
-    modelo = input("Registrar modelo del equipo: ")
-    numero_serial = input("Registrar numero serial del equipo: ")
+        # Codigo para obtener la opcion de equipo
+        opcion_equipo = int(input("Ingrese el tipo de equipo, ingresando el numero de la opcion de la siguiente lista: \n 1)computadora \n 2)celular \n 3)impresora \n 4)No especificado"))
+        TIPO_DE_EQUIPO = { 1:"computadora", 2:"celular",3:"impresora",4:None}
 
-    # Codigo para obtener la opcion de equipo
-    opcion_equipo = int(input("Ingrese el tipo de equipo, ingresando el numero de la opcion de la siguiente lista: \n 1)computadora \n 2)celular \n 3)impresora \n 4)No especificado"))
-    TIPO_DE_EQUIPO = { 1:"computadora", 2:"celular",3:"impresora",4:None}
+        if opcion_equipo < 1 or opcion_equipo > 4:
+            print("Operacion cancelada, el numero de opcion no es valido")
+            return
+        
+        tipo_equipo = TIPO_DE_EQUIPO[opcion_equipo]
+        #
+        estado_equipo = input("Registrar estado del equipo: ")    
+        if estado_equipo == "": estado_equipo = None
 
-    if opcion_equipo < 1 or opcion_equipo > 4:
-        print("Operacion cancelada, el numero de opcion no es valido")
-        return
-    
-    tipo_equipo = TIPO_DE_EQUIPO[opcion_equipo]
-    #
-    estado_equipo = input("Registrar estado del equipo: ")    
-    if estado_equipo == "": estado_equipo = None
+        descripcion = input("Registrar descripcion del equipo: ")
+        if descripcion == "": descripcion = None
 
-    descripcion = input("Registrar descripcion del equipo: ")
-    if descripcion == "": descripcion = None
+        codigo_seguridad = input("Registrar codigo de seguridad del equipo: ")
+        if codigo_seguridad == "": codigo_seguridad = None
 
-    codigo_seguridad = input("Registrar codigo de seguridad del equipo: ")
-    if codigo_seguridad == "": codigo_seguridad = None
+        id_cliente = input("Registrar id del cliente del equipo: ")
+        if id_cliente == "": id_cliente = None
 
-    id_cliente = input("Registrar id del cliente del equipo: ")
-    if id_cliente == "": id_cliente = None
+        args = (id_equipo,marcha,modelo,numero_serial,tipo_equipo,estado_equipo,descripcion,codigo_seguridad,id_cliente)
+        cursor.callproc("sp_update_equipo",args)
 
-    args = (id_equipo,marcha,modelo,numero_serial,tipo_equipo,estado_equipo,descripcion,codigo_seguridad,id_cliente)
-    cursor.callproc("sp_update_equipo",args)
-    miConexion.commit()
+        print("Inventario actualizado.")
 
-    print("Inventario actualizado.")
+    except Exception as e:
+            print(e)
 
 def eliminar_equipo():
     id_equipo = input("ID del equipo a eliminar: ")
@@ -688,22 +784,14 @@ def eliminar_equipo():
         return
     
     try:
-        cursor.execute(
-            "sp_delete_servicio_tecnico",
-            (id_equipo,)
-        )
 
         cursor.callproc(
             "sp_delete_equipo",
             (id_equipo,)
         )
 
-        miConexion.commit()
-        print("Equipo eliminado correctamente")
-
     except Exception as e:
-        miConexion.rollback()
-        print("Error al eliminar:", e)
+        print(e)
 
     if cursor.rowcount == 0:
         print("No existe un equipo con ese ID")

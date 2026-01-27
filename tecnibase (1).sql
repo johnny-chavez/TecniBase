@@ -1472,8 +1472,13 @@ BEGIN
     END IF;
 
     -- ELIMINACIÓN
+    
+    DELETE FROM servicio_tecnico
+    WHERE id_equipo = p_id_equipo;
     DELETE FROM equipo
     WHERE id_equipo = p_id_equipo;
+    
+    
 
     COMMIT;
 END$$
@@ -1791,7 +1796,10 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'La venta no existe';
     END IF;
-
+	
+    DELETE FROM venta_producto
+    WHERE id_venta = p_id_venta;
+    
     DELETE FROM venta
     WHERE id_venta = p_id_venta;
 
